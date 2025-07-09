@@ -579,7 +579,7 @@ if st.checkbox("Show Rolling 5-Year Sharpe Comparison"):
     # Assemble results
     sharpe_df = pd.DataFrame({
         "Date": dates,
-        "CrestCast™ Sharpe": crest_sharpes,
+        "CrestCast Sharpe": crest_sharpes,
         "Benchmark Sharpe": bench_sharpes
     }).set_index("Date")
 
