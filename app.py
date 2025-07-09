@@ -509,7 +509,7 @@ if st.checkbox("Show 1yr, 5yr, 10yr, Since Inception Statistics"):
 
 if st.checkbox("Show Rolling 1-Year Alpha Summary and Distribution"):
 
-    rolling_window = 12 # 5 years
+    rolling_window = 36 # 5 years
     alpha_values = []
     alpha_dates = []
 
@@ -554,7 +554,7 @@ if st.checkbox("Show Rolling 1-Year Alpha Summary and Distribution"):
 
 if st.checkbox("Show Rolling 1-Year Sharpe Comparison"):
     # Sharpe stats and chart
-    rolling_window = 12  # 5 years
+    rolling_window = 36  # 5 years
     crest_sharpes = []
     bench_sharpes = []
     dates = []
