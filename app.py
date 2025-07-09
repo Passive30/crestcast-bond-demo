@@ -16,12 +16,12 @@ st.set_page_config(
 banner = Image.open("banner.png")
 st.image(banner, use_container_width=True)
 st.warning(
-    "🔧 This demo is currently in **DRAFT** status. Index data becomes live and finalized on August 1, 2025. "
+    "🔧 This demo is currently in **DRAFT** status. We estimate the index will become live and finalized on January 1, 2026. "
     "Please treat all results as preliminary and subject to refinement during this period."
 )
 
 # === Load and Clean CSV ===
-file_path = "timeseries_6-25-2025.csv"
+file_path = "bond_demo.csv"
 returns_df = pd.read_csv(file_path)
 returns_df['Date'] = pd.to_datetime(returns_df['Date'], errors='coerce')
 returns_df = returns_df.set_index('Date')
@@ -103,9 +103,9 @@ def information_ratio(port, bench):
 
 # === Intro and Branding ===
 st.markdown("""
-## Introducing CrestCast™ Macro-Aware US Factor Rotation Index
+## Introducing CrestCast™ Macro-Aware US Bond Duration Rotation Index
 ### Detailed Analytics Demonstration
-This demo illustrates how the CrestCast™ index can dynamically enhance core equity exposure using regime-aware factor rotation.
+This demo illustrates how the CrestCast™ index can dynamically enhance core bond exposure using regime-aware duration targeting.
 """)
 
 # === Section 1: Simulation Parameters ===
@@ -113,7 +113,7 @@ st.header("1. Simulation Setup")
 st.info(
        "📌 *Disclaimer:* Intervallum Technologies is not a registered investment advisor and does not provide personalized investment advice. "
     "This demonstration is for informational and educational purposes only and is intended to illustrate the capabilities of the CrestCast™ "
-    "Macro-Aware U.S. Factor Rotation Index. The model was built using walk-forward cross-validation on data from 1968 through 2013. "
+    "Macro-Aware U.S. Bond Rotation Index. The model was built using walk-forward cross-validation on data from 1968 through 2013. "
     "From 2014 forward, index results reflect strict out-of-sample application with no retraining or parameter adjustments—"
     "providing a real-world view of model integrity and implementation discipline."
 
@@ -129,8 +129,7 @@ account_type = "Individual"
 st.header("2. Select Benchmark for Comparison")
 
 index_options = {
-    "Russell 3000 Index": "^RUATR",
-    "R3000 ETF (IWV)": "IWV"  # Add this line
+    "US AGG ETF (AGG)": "AGG"  # Add this line
 }
 
 selected_label = st.selectbox("Preferred Index", list(index_options.keys()))
@@ -143,10 +142,10 @@ macro_aware = True
 
 
 if macro_aware:
-    st.markdown("The CrestCast™ index can serve as an overlay to empower dynamic shifts to style allocations in an underlying index.")
+    st.markdown("The CrestCast™ index can serve as an overlay to empower dynamic shifts to duration allocations in an underlying index.")
 
     # Overlay Fee Dropdown
-    fee_bps = st.selectbox("Overlay Fee (basis points))", [0, 20, 35, 50], index=0)
+    fee_bps = st.selectbox("Overlay Fee (basis points))", [0, 10, 20, 35], index=0)
     annual_fee = fee_bps / 10000
     monthly_fee = annual_fee / 12
 
