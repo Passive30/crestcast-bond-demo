@@ -585,7 +585,7 @@ if st.checkbox("Show Rolling 5-Year Sharpe Comparison"):
 
     # Summary stats
     percent_better_sharpe = (sharpe_df["CrestCast Sharpe"] > sharpe_df["Benchmark Sharpe"]).mean()
-    avg_diff = (sharpe_df["CrestCast™ Sharpe"] - sharpe_df["Benchmark Sharpe"]).mean()
+    avg_diff = (sharpe_df["CrestCast Sharpe"] - sharpe_df["Benchmark Sharpe"]).mean()
 
     st.markdown("### 📈 Rolling 5-Year Sharpe Ratio Comparison")
     st.markdown(f"- **% of 5-Year Windows Where CrestCast™ > Benchmark**: **{percent_better_sharpe:.1%}**")
