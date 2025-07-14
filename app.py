@@ -509,9 +509,9 @@ if st.checkbox("Show 1yr, 5yr, 10yr, Since Inception Statistics"):
         mime="text/csv"
     )
 
-if st.checkbox("Show Rolling 5-Year Alpha Summary and Distribution"):
+if st.checkbox("Show Rolling 3-Year Alpha Summary and Distribution"):
 
-    rolling_window = 60 # 5 years
+    rolling_window = 36 # 3 years
     alpha_values = []
     alpha_dates = []
 
@@ -536,27 +536,27 @@ if st.checkbox("Show Rolling 5-Year Alpha Summary and Distribution"):
     alpha_series = pd.Series(alpha_values, index=alpha_dates)
 
     if alpha_series.empty:
-        st.warning("Not enough data to calculate rolling 5-year alpha.")
+        st.warning("Not enough data to calculate rolling 3-year alpha.")
     else:
         # Summary stats
         percent_positive = (alpha_series > 0).mean()
         average_alpha = alpha_series.mean()
 
-        st.markdown(f"- **Percent of 5-Year Windows with Positive Alpha**: **{percent_positive:.1%}**")
-        st.markdown(f"- **Average Annualized Alpha (5-Year Windows)**: **{average_alpha:.2%}**")
+        st.markdown(f"- **Percent of 3-Year Windows with Positive Alpha**: **{percent_positive:.1%}**")
+        st.markdown(f"- **Average Annualized Alpha (3-Year Windows)**: **{average_alpha:.2%}**")
 
         # Histogram
         fig, ax = plt.subplots()
         alpha_series.hist(bins=30, edgecolor='black', ax=ax)
-        ax.set_title("Distribution of 5-Year Rolling Alpha")
+        ax.set_title("Distribution of 3-Year Rolling Alpha")
         ax.set_xlabel("Annualized Alpha")
         ax.set_ylabel("Frequency")
         st.pyplot(fig)
 
 
-if st.checkbox("Show Rolling 5-Year Sharpe Comparison"):
+if st.checkbox("Show Rolling 3-Year Sharpe Comparison"):
     # Sharpe stats and chart
-    rolling_window = 60  # 5 years
+    rolling_window = 36  # 5 years
     crest_sharpes = []
     bench_sharpes = []
     dates = []
@@ -589,14 +589,14 @@ if st.checkbox("Show Rolling 5-Year Sharpe Comparison"):
     percent_better_sharpe = (sharpe_df["CrestCast Sharpe"] > sharpe_df["Benchmark Sharpe"]).mean()
     avg_diff = (sharpe_df["CrestCast Sharpe"] - sharpe_df["Benchmark Sharpe"]).mean()
 
-    st.markdown("### 📈 Rolling 5-Year Sharpe Ratio Comparison")
-    st.markdown(f"- **% of 5-Year Windows Where CrestCast™ > Benchmark**: **{percent_better_sharpe:.1%}**")
+    st.markdown("### 📈 Rolling 3-Year Sharpe Ratio Comparison")
+    st.markdown(f"- **% of 3-Year Windows Where CrestCast™ > Benchmark**: **{percent_better_sharpe:.1%}**")
     st.markdown(f"- **Average Sharpe Advantage (CrestCast™ minus Benchmark)**: **{avg_diff:.2f}**")
 
     # Optional chart
     fig, ax = plt.subplots(figsize=(6, 3))  # Smaller footprint
     sharpe_df.plot(ax=ax)
-    ax.set_title("Rolling 5-Year Sharpe Ratio")
+    ax.set_title("Rolling 3-Year Sharpe Ratio")
     ax.set_ylabel("Sharpe Ratio")
     ax.grid(True, linestyle="--", alpha=0.3)
     st.pyplot(fig)
