@@ -16,8 +16,10 @@ st.set_page_config(
 banner = Image.open("banner.png")
 st.image(banner, use_container_width=True)
 st.warning(
-    "🔧 This demo is currently in **DRAFT** status. We estimate the index will become live and finalized on January 1, 2026. "
-    "Please treat all results as preliminary and subject to refinement during this period."
+    "🔧 This demo currently explores our algorithm driven macro-aware duration shifting model utilizinga simple regime based"
+    "shift between Vanguard Short Bond ETF (BSV) and Vanguard Intermediate Bond ETF (VIB). We estimate our index will become live and finalized on January 1, 2026. "
+    "Please treat all results as preliminary and education in nature, furthering out conversation as to the power"
+    "of macro across wealth management style portfolios."
 )
 
 # === Load and Clean CSV ===
