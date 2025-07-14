@@ -18,7 +18,7 @@ st.image(banner, use_container_width=True)
 st.warning(
     "🔧 This demo currently explores our algorithm driven macro-aware duration shifting model utilizinga simple regime based"
     "shift between Vanguard Short Bond ETF (BSV) and Vanguard Intermediate Bond ETF (VIB). We estimate our index will become live and finalized on January 1, 2026. "
-    "Please treat all results as preliminary and education in nature, furthering out conversation as to the power"
+    "Please treat all results as preliminary and education in nature, furthering our conversation as to the power "
     "of macro across wealth management style portfolios."
 )
 
