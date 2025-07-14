@@ -621,24 +621,26 @@ cols = st.columns(3)
 
 with cols[0]:
     st.metric(
-        label="📈 10-Year Windows",
-        value="100% Alpha ⬆",
-        delta="CrestCast beat benchmark on Sharpe 96% of the time"
+        label="📈 10-Year Window",
+        value="1.33% Alpha ⬆",
+        delta="Sharpe nearly 2× benchmark"
     )
 
 with cols[1]:
     st.metric(
-        label="📊 5-Year Windows",
-        value="98% Alpha ⬆",
-        delta="Sharpe higher in 77% of periods"
+        label="📊 5-Year Window",
+        value="1.95% Alpha ⬆",
+        delta="Outperformed in return + risk"
     )
 
 with cols[2]:
     st.metric(
-        label="📉 3-Year Windows",
-        value="97% Alpha ⬆",
-        delta="Sharpe higher in 78% of periods"
+        label="📉 1-Year Window",
+        value="4.61% Alpha ⬆",
+        delta="Sharpe more than 2× benchmark"
     )
+
+st.markdown("---")
 
 st.markdown("---")
 
