@@ -21,7 +21,7 @@ st.markdown(
     """
     <style>
         .centered-container {
-            max-width: 1100px;
+            max-width: 900px;
             margin-left: auto;
             margin-right: auto;
         }
