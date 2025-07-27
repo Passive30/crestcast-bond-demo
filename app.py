@@ -89,23 +89,29 @@ def beta_alpha(port, bench, rf=None):
 
     if rf is not None:
         rf = rf.reindex(df.index).ffill()
-        port_excess = df["CrestCast"] - rf
-        bench_excess = df["Benchmark"] - rf
+        df = df.dropna(subset=["CrestCast", "Benchmark"])
+        excess_port = df["CrestCast"] - rf
+        excess_bench = df["Benchmark"] - rf
+        rf_avg = rf.loc[df.index].mean()
     else:
-        port_excess = df["CrestCast"]
-        bench_excess = df["Benchmark"]
+        excess_port = df["CrestCast"]
+        excess_bench = df["Benchmark"]
+        rf_avg = 0
 
-    if len(port_excess) < 2:
+    if len(excess_port) < 12:
         return np.nan, np.nan
 
-    X = sm.add_constant(bench_excess)
-    model = sm.OLS(port_excess, X).fit()
+    # Beta calculation
+    beta = np.cov(excess_port, excess_bench)[0, 1] / np.var(excess_bench)
 
-    beta = model.params["Benchmark"]
-    alpha_monthly = model.params["const"]
-    alpha_annualized = (1 + alpha_monthly)**12 - 1  # compounding method
+    # Annualized returns
+    ann_port = (1 + df["CrestCast"]).prod()**(12 / len(df)) - 1
+    ann_bench = (1 + df["Benchmark"]).prod()**(12 / len(df)) - 1
 
-    return beta, alpha_annualized
+    # Alpha per YCharts
+    alpha = (ann_port - rf_avg) - beta * (ann_bench - rf_avg)
+
+    return beta, alpha
 
 
 def sharpe_ratio(r, rf=None):
