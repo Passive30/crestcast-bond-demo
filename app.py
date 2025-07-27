@@ -68,7 +68,7 @@ if 'Risk_Free' not in returns_df.columns:
 risk_free_series = returns_df['Risk_Free'].dropna()
 
 # === Metric Functions ===
-def annualized_return_ycharts_style(r):
+def annualized_return(r):
     if r.empty:
         return np.nan
     n_years = len(r) / 12
