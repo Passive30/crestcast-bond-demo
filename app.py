@@ -567,7 +567,7 @@ if st.checkbox("Show 1yr, 5yr, 10yr, Since Inception Statistics"):
 
 if st.checkbox("Show Rolling 3-Year Alpha Summary and Distribution"):
 
-    rolling_window = 36 # 3 years
+    rolling_window = 60 # 3 years
     alpha_values = []
     alpha_dates = []
 
