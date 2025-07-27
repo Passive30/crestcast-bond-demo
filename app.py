@@ -55,6 +55,29 @@ returns_df = returns_df.set_index('Date')
 returns_df = returns_df.apply(pd.to_numeric, errors='coerce')
 returns_df = returns_df.dropna(how="all")
 
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+
+# === Load and Clean CSV ===
+file_path = "bond_demo.csv"
+returns_df = pd.read_csv(file_path)
+
+# Handle date column dynamically
+if 'Date' not in returns_df.columns:
+    returns_df = pd.read_csv(file_path, parse_dates=True, index_col=0)
+else:
+    returns_df['Date'] = pd.to_datetime(returns_df['Date'], errors='coerce')
+    returns_df = returns_df.set_index('Date')
+
+returns_df = returns_df.apply(pd.to_numeric, errors='coerce')
+returns_df = returns_df.dropna(how="all")
+
+# === Risk-Free Rate (Monthly, Decimal) ===
+if 'Risk_Free' not in returns_df.columns:
+    raise ValueError("Risk_Free column missing from dataset.")
+risk_free_series = returns_df['Risk_Free'].dropna()
+
 # === Metric Functions ===
 def annualized_return(r):
     if r.empty:
@@ -70,24 +93,44 @@ def annualized_std(r):
         return np.nan
     return r.std() * np.sqrt(12)
 
-def beta_alpha(port, bench):
+def beta_alpha(port, bench, rf=None):
     port = port.dropna()
     bench = bench.dropna()
     df = pd.concat([port.rename("CrestCast"), bench.rename("Benchmark")], axis=1).dropna()
-    if df.shape[0] < 2:
+
+    if rf is not None:
+        rf = rf.reindex(df.index).fillna(method='ffill')
+        port_excess = df["CrestCast"] - rf
+        bench_excess = df["Benchmark"] - rf
+    else:
+        port_excess = df["CrestCast"]
+        bench_excess = df["Benchmark"]
+
+    if len(port_excess) < 2:
         return np.nan, np.nan
-    cov = np.cov(df["CrestCast"], df["Benchmark"])
-    beta = cov[0, 1] / cov[1, 1]
-    alpha = annualized_return(df["CrestCast"]) - beta * annualized_return(df["Benchmark"])
+
+    X = sm.add_constant(bench_excess)
+    model = sm.OLS(port_excess, X).fit()
+    beta = model.params["Benchmark"]
+    alpha = model.params["const"] * 12  # Annualize
     return beta, alpha
 
+def sharpe_ratio(r, rf=None):
+    if r.empty:
+        return np.nan
+    if rf is not None:
+        rf = rf.reindex(r.index).fillna(method='ffill')
+        excess = r - rf
+    else:
+        excess = r
+    return (excess.mean() / excess.std()) * np.sqrt(12) if excess.std() != 0 else np.nan
 
-def sharpe_ratio(r, rf=0.0): return ((r - rf/12).mean() / r.std()) * np.sqrt(12)
 def max_drawdown(r):
     cumulative = (1 + r).cumprod()
     peak = cumulative.cummax()
     drawdown = (cumulative - peak) / peak
     return drawdown.min()
+
 def ulcer_index(returns):
     if returns.empty:
         return np.nan
@@ -101,27 +144,25 @@ def ulcer_ratio(port, bench):
     ui = ulcer_index(port)
     ar = annualized_return(port)
     return ar / ui if ui != 0 else np.nan
-    
-def cumulative_return(series): return (1 + series).cumprod()
+
+def cumulative_return(series):
+    return (1 + series).cumprod()
+
 def tracking_error(port, bench):
     try:
         df = pd.concat([port, bench], axis=1).dropna()
         if df.shape[0] < 2:
             return np.nan
         excess_returns = df.iloc[:, 0] - df.iloc[:, 1]
-        if not np.issubdtype(excess_returns.dtype, np.number):
-            return np.nan
         return excess_returns.std() * np.sqrt(12)
     except Exception as e:
         print(f"Tracking Error Calculation Failed: {e}")
         return np.nan
-def information_ratio(port, bench):
+
+def information_ratio(port, bench, rf=None):
     try:
-        df = pd.concat([port, bench], axis=1).dropna()
-        if df.shape[0] < 2:
-            return np.nan
-        beta, alpha = beta_alpha(df.iloc[:, 0], df.iloc[:, 1])
-        te = tracking_error(df.iloc[:, 0], df.iloc[:, 1])
+        beta, alpha = beta_alpha(port, bench, rf=rf)
+        te = tracking_error(port, bench)
         return alpha / te if te and te != 0 else np.nan
     except Exception as e:
         print(f"Information Ratio Calculation Failed: {e}")
