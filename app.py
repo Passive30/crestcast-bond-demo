@@ -104,6 +104,17 @@ def beta_alpha(port, bench, rf_series):
 
     return beta, alpha  # ✅ THIS is the only return we want
 
+def sharpe_ratio(r, rf=None):
+    if r.empty:
+        return np.nan
+    if rf is not None:
+        rf = rf.reindex(r.index).ffill()
+        excess = r - rf
+    else:
+        excess = r
+    return (excess.mean() / excess.std()) * np.sqrt(12) if excess.std() != 0 else np.nan
+
+
 # === Intro and Branding ===
 st.markdown("""
 ## Introducing CrestCast™ Macro-Aware US Bond Duration Rotation Index
