@@ -678,22 +678,22 @@ cols = st.columns(3)
 with cols[0]:
     st.metric(
         label="📈 10-Year Window",
-        value="1.33% Alpha ⬆",
-        delta="Sharpe nearly 2× benchmark"
+        value="PERSISTENT",
+        delta="Regimes"
     )
 
 with cols[1]:
     st.metric(
         label="📊 5-Year Window",
-        value="1.95% Alpha ⬆",
-        delta="Outperformed in return + risk"
+        value="PERVASIVE",
+        delta="Across Investment Styles"
     )
 
 with cols[2]:
     st.metric(
         label="📉 1-Year Window",
-        value="4.61% Alpha ⬆",
-        delta="Sharpe more than 2× benchmark"
+        value="POWERFUL",
+        delta="Implications"
     )
 
 st.markdown("---")
