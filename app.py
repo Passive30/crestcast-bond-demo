@@ -51,7 +51,7 @@ st.set_page_config(
 )
 
 # === Load CSV with Date Handling ===
-file_path = "bond_demo.csv"
+file_path = "all_demo.csv"
 returns_df = pd.read_csv(file_path)
 
 if 'Date' not in returns_df.columns:
