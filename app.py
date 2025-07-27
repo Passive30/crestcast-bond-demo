@@ -68,9 +68,6 @@ if 'Risk_Free' not in returns_df.columns:
 risk_free_series = returns_df['Risk_Free'].dropna()
 
 # === Metric Functions ===
-import statsmodels.api as sm
-
-import statsmodels.api as sm
 
 def annualized_return(r):
     """CAGR-style annualized return from monthly returns."""
@@ -100,7 +97,7 @@ def beta_alpha(port, bench, rf_series):
     if len(excess_port) < 12:
         return np.nan, np.nan
 
-    X = sm.add_constant(excess_bench)
+    X = sm.add_constant(pd.DataFrame({"Benchmark": excess_bench}))
     model = sm.OLS(excess_port, X).fit()
     beta = model.params["Benchmark"]
     alpha = model.params["const"] * 12  # monthly intercept → annualized alpha
