@@ -113,7 +113,48 @@ def sharpe_ratio(r, rf=None):
     else:
         excess = r
     return (excess.mean() / excess.std()) * np.sqrt(12) if excess.std() != 0 else np.nan
+def max_drawdown(r):
+    cumulative = (1 + r).cumprod()
+    peak = cumulative.cummax()
+    drawdown = (cumulative - peak) / peak
+    return drawdown.min()
 
+def ulcer_index(returns):
+    if returns.empty:
+        return np.nan
+    cumulative = (1 + returns).cumprod()
+    peak = cumulative.cummax()
+    drawdown = (cumulative - peak) / peak
+    squared_dd = drawdown ** 2
+    return np.sqrt(squared_dd.mean())
+
+def ulcer_ratio(port, bench):
+    ui = ulcer_index(port)
+    ar = annualized_return(port)
+    return ar / ui if ui != 0 else np.nan
+
+def cumulative_return(series):
+    return (1 + series).cumprod()
+
+def tracking_error(port, bench):
+    try:
+        df = pd.concat([port, bench], axis=1).dropna()
+        if df.shape[0] < 2:
+            return np.nan
+        excess_returns = df.iloc[:, 0] - df.iloc[:, 1]
+        return excess_returns.std() * np.sqrt(12)
+    except Exception as e:
+        print(f"Tracking Error Calculation Failed: {e}")
+        return np.nan
+
+def information_ratio(port, bench, rf=None):
+    try:
+        beta, alpha = beta_alpha(port, bench, rf=rf)
+        te = tracking_error(port, bench)
+        return alpha / te if te and te != 0 else np.nan
+    except Exception as e:
+        print(f"Information Ratio Calculation Failed: {e}")
+        return np.nan
 
 # === Intro and Branding ===
 st.markdown("""
