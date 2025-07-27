@@ -88,7 +88,7 @@ def beta_alpha(port, bench, rf=None):
     df = pd.concat([port.rename("CrestCast"), bench.rename("Benchmark")], axis=1).dropna()
 
     if rf is not None:
-        rf = rf.reindex(df.index).fillna(method='ffill')
+        rf = rf.reindex(df.index).ffill()
         port_excess = df["CrestCast"] - rf
         bench_excess = df["Benchmark"] - rf
     else:
@@ -100,9 +100,13 @@ def beta_alpha(port, bench, rf=None):
 
     X = sm.add_constant(bench_excess)
     model = sm.OLS(port_excess, X).fit()
+
     beta = model.params["Benchmark"]
-    alpha = model.params["const"] * 12  # Annualize
-    return beta, alpha
+    alpha_monthly = model.params["const"]
+    alpha_annualized = (1 + alpha_monthly)**12 - 1  # compounding method
+
+    return beta, alpha_annualized
+
 
 def sharpe_ratio(r, rf=None):
     if r.empty:
