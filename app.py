@@ -82,24 +82,30 @@ def annualized_std(r):
         return np.nan
     return r.std() * np.sqrt(12)
 
-def beta_alpha(port, bench, rf=None):
-    port = port.dropna()
-    bench = bench.dropna()
+def beta_alpha(port, bench, rf_series):
+    # Align and drop NaNs
     df = pd.concat([port.rename("CrestCast"), bench.rename("Benchmark")], axis=1).dropna()
+    rf = rf_series.reindex(df.index).ffill()
+    rf_avg = rf.mean()  # average RF over full period
 
-    if rf is not None:
-        rf = rf.reindex(df.index).ffill()
-        df = df.dropna(subset=["CrestCast", "Benchmark"])
-        excess_port = df["CrestCast"] - rf
-        excess_bench = df["Benchmark"] - rf
-        rf_avg = rf.loc[df.index].mean()
-    else:
-        excess_port = df["CrestCast"]
-        excess_bench = df["Benchmark"]
-        rf_avg = 0
+    # Compute excess returns for beta only
+    excess_port = df["CrestCast"] - rf
+    excess_bench = df["Benchmark"] - rf
 
-    if len(excess_port) < 12:
+    if len(df) < 12:
         return np.nan, np.nan
+
+    beta = np.cov(excess_port, excess_bench)[0, 1] / np.var(excess_bench)
+
+    # Compute *gross* annualized returns
+    ann_port = (1 + df["CrestCast"]).prod()**(12 / len(df)) - 1
+    ann_bench = (1 + df["Benchmark"]).prod()**(12 / len(df)) - 1
+
+    # Apply the YCharts alpha formula
+    alpha = (ann_port - rf_avg) - beta * (ann_bench - rf_avg)
+
+    return beta, alpha
+
 
     # Beta calculation
     beta = np.cov(excess_port, excess_bench)[0, 1] / np.var(excess_bench)
