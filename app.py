@@ -5,10 +5,8 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from PIL import Image
+import statsmodels.api as sm
 
-# === Page Configuration ===
-import streamlit as st
-from PIL import Image
 
 # === Page Configuration ===
 st.set_page_config(
@@ -46,36 +44,27 @@ with st.container():
 
     st.markdown('</div>', unsafe_allow_html=True)
 
+# === Page Config ===
+st.set_page_config(
+    page_title="Passive 3.0™ Overlay – Direct Indexing Demo",
+    layout="wide"
+)
 
-# === Load and Clean CSV ===
-file_path = "bond_demo.csv"
-returns_df = pd.read_csv(file_path)
-returns_df['Date'] = pd.to_datetime(returns_df['Date'], errors='coerce')
-returns_df = returns_df.set_index('Date')
-returns_df = returns_df.apply(pd.to_numeric, errors='coerce')
-returns_df = returns_df.dropna(how="all")
-
-import pandas as pd
-import numpy as np
-import statsmodels.api as sm
-
-# === Load and Clean CSV ===
+# === Load CSV with Date Handling ===
 file_path = "bond_demo.csv"
 returns_df = pd.read_csv(file_path)
 
-# Handle date column dynamically
 if 'Date' not in returns_df.columns:
     returns_df = pd.read_csv(file_path, parse_dates=True, index_col=0)
 else:
     returns_df['Date'] = pd.to_datetime(returns_df['Date'], errors='coerce')
     returns_df = returns_df.set_index('Date')
 
-returns_df = returns_df.apply(pd.to_numeric, errors='coerce')
-returns_df = returns_df.dropna(how="all")
+returns_df = returns_df.apply(pd.to_numeric, errors='coerce').dropna(how="all")
 
-# === Risk-Free Rate (Monthly, Decimal) ===
+# === Risk-Free Series (Monthly) ===
 if 'Risk_Free' not in returns_df.columns:
-    raise ValueError("Risk_Free column missing from dataset.")
+    raise ValueError("Risk_Free column missing")
 risk_free_series = returns_df['Risk_Free'].dropna()
 
 # === Metric Functions ===
