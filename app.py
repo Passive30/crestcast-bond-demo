@@ -68,41 +68,43 @@ if 'Risk_Free' not in returns_df.columns:
 risk_free_series = returns_df['Risk_Free'].dropna()
 
 # === Metric Functions ===
+import statsmodels.api as sm
+
 def annualized_return(r):
+    """CAGR-style annualized return from monthly returns."""
     if r.empty:
         return np.nan
-    n_years = len(r) / 12
     cumulative_growth = (1 + r).prod()
+    n_years = len(r) / 12
     return cumulative_growth ** (1 / n_years) - 1
 
 def annualized_std(r):
+    """Annualized standard deviation from monthly returns."""
     if r.empty:
         return np.nan
     return r.std() * np.sqrt(12)
 
 def beta_alpha(port, bench, rf_series):
-    # Align and drop NaNs
+    """
+    Regress monthly excess returns of portfolio vs benchmark.
+    Alpha is annualized regression intercept.
+    """
     df = pd.concat([port.rename("CrestCast"), bench.rename("Benchmark")], axis=1).dropna()
     rf = rf_series.reindex(df.index).ffill()
-    rf_avg = rf.mean()  # average RF over full period
 
-    # Compute excess returns for beta only
     excess_port = df["CrestCast"] - rf
     excess_bench = df["Benchmark"] - rf
 
-    if len(df) < 12:
+    if len(excess_port) < 12:
         return np.nan, np.nan
 
-    beta = np.cov(excess_port, excess_bench)[0, 1] / np.var(excess_bench)
-
-    # Compute *gross* annualized returns
-    ann_port = (1 + df["CrestCast"]).prod()**(12 / len(df)) - 1
-    ann_bench = (1 + df["Benchmark"]).prod()**(12 / len(df)) - 1
-
-    # Apply the YCharts alpha formula
-    alpha = (ann_port - rf_avg) - beta * (ann_bench - rf_avg)
+    X = sm.add_constant(excess_bench)
+    model = sm.OLS(excess_port, X).fit()
+    beta = model.params["Benchmark"]
+    alpha = model.params["const"] * 12  # monthly intercept → annualized alpha
 
     return beta, alpha
+
 
 
     # Beta calculation
