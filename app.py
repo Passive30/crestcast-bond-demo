@@ -600,7 +600,7 @@ if st.checkbox("Show Rolling 3-Year Alpha Summary and Distribution"):
         if port.isnull().any() or bench.isnull().any():
             continue
 
-        _, alpha = beta_alpha(port, bench)
+        _, alpha = beta_alpha(port, bench, rf_series=risk_free_series)
         alpha_values.append(alpha)
         alpha_dates.append(window.index[-1])
 
