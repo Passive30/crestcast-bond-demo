@@ -405,7 +405,7 @@ metrics = [
 crestcast_metrics = [
     annualized_return(named_crestcast),
     annualized_std(named_crestcast),
-    *beta_alpha(named_crestcast, named_benchmark),
+    beta_alpha(named_crestcast, named_benchmark, rf_series=risk_free_series),
     sharpe_ratio(named_crestcast),
     tracking_error(named_crestcast, named_benchmark),
     information_ratio(named_crestcast, named_benchmark),
@@ -521,8 +521,8 @@ if st.checkbox("Show 1yr, 5yr, 10yr, Since Inception Statistics"):
     metrics = {
         "Ann. Return": lambda p, b: (annualized_return(p), annualized_return(b)),
         "Ann. Std Dev": lambda p, b: (annualized_std(p), annualized_std(b)),
-        "Beta": lambda p, b: beta_alpha(p, b)[0],
-        "Alpha": lambda p, b: beta_alpha(p, b)[1],
+        "Beta": lambda p, b: beta_alpha(p, b, rf_series=risk_free_series)[0],
+        "Alpha": lambda p, b: beta_alpha(p, b, rf_series=risk_free_series)[1],
         "Sharpe Ratio": lambda p, b: (sharpe_ratio(p), sharpe_ratio(b)),
         "Max Drawdown": lambda p, b: (max_drawdown(p), max_drawdown(b)),
         "Ulcer Ratio": lambda p, b: (ulcer_ratio(p, b), ulcer_ratio(b, b)),
