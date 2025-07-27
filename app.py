@@ -401,11 +401,13 @@ metrics = [
     "Max Drawdown", "Ulcer Ratio", "Up Capture", "Down Capture"
 ]
 
-# CrestCast metrics (labeled for beta_alpha to work)
+beta, alpha = beta_alpha(named_crestcast, named_benchmark, rf_series=risk_free_series)
+
 crestcast_metrics = [
     annualized_return(named_crestcast),
     annualized_std(named_crestcast),
-    beta_alpha(named_crestcast, named_benchmark, rf_series=risk_free_series),
+    beta,
+    alpha,
     sharpe_ratio(named_crestcast),
     tracking_error(named_crestcast, named_benchmark),
     information_ratio(named_crestcast, named_benchmark),
@@ -414,6 +416,7 @@ crestcast_metrics = [
     up_capture(named_crestcast, named_benchmark),
     down_capture(named_crestcast, named_benchmark)
 ]
+
 
 # Benchmark metrics
 benchmark_metrics = [
